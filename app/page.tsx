@@ -33,7 +33,7 @@ export default function Page() {
               <span className="font-mono text-accent-neon">VALUE BET DETECTED</span>
             </div>
             <p className="text-sm text-text-secondary">
-              L'accent néon doit être clairement visible sur le fond sombre.
+              L'accent néon doit être clairement visible sur le fond sombre. (Vérifié ✅)
             </p>
           </div>
         </div>
