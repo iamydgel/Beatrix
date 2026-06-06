@@ -3,6 +3,7 @@ import { Geist, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/layout/Sidebar";
 import BottomNav from "@/components/layout/BottomNav";
+import CommandPalette from "@/components/layout/CommandPalette";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,6 +39,7 @@ export default function RootLayout({
             {children}
           </main>
           <BottomNav />
+          <CommandPalette />
         </div>
       </body>
     </html>
