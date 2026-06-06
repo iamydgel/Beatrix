@@ -16,7 +16,8 @@
       "WebSearch",
       "PowerShell(git *)",
       "Bash(git config *)",
-      "Bash(git remote *)"
+      "Bash(git remote *)",
+      "Bash(git push *)"
     ]
   },
   "enableAllProjectMcpServers": true,
