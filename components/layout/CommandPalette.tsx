@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CommandPaletteActions } from './CommandPaletteActions';
 
 export default function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,8 +60,32 @@ export default function CommandPalette() {
                 placeholder="Search for anything..."
                 className="w-full bg-transparent text-white outline-none text-lg font-mono placeholder:text-text-secondary"
               />
-              <div className="mt-4 text-sm text-text-secondary font-mono">
-                {query === "" ? "Command Palette is ready. Use /commands to start." : `Searching for: ${query}...`}
+
+              <div className="mt-4">
+                <AnimatePresence mode="wait">
+                  {query === "" ? (
+                    <motion.div
+                      key="actions"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <CommandPaletteActions />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="search"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="mt-4 text-sm text-text-secondary font-mono"
+                    >
+                      Searching for: {query}...
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>
