@@ -1,21 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --background: #0A0A0A;
-  --surface: #121212;
-  --accent-neon: #00FF9F;
-  --text-primary: #FFFFFF;
-  --text-secondary: #888888;
-}
-
-body {
-  background-color: var(--background);
-  color: var(--text-primary);
-  font-family: var(--font-geist-sans), var(--font-inter), sans-serif;
-}
-
-.font-mono {
-  font-family: var(--font-jetbrains-mono), monospace;
+@theme {
+  --color-background: #0A0A0A;
+  --color-surface: #121212;
+  --color-accent-neon: #00FF9F;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #888888;
 }
