@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CommandPaletteActions } from './CommandPaletteActions';
+import { CommandPaletteSearch } from './CommandPaletteSearch';
 
 export default function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
@@ -66,6 +67,7 @@ export default function CommandPalette() {
                   {query === "" ? (
                     <motion.div
                       key="actions"
+                      layout
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -76,13 +78,13 @@ export default function CommandPalette() {
                   ) : (
                     <motion.div
                       key="search"
+                      layout
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="mt-4 text-sm text-text-secondary font-mono"
                     >
-                      Searching for: {query}...
+                      <CommandPaletteSearch query={query} />
                     </motion.div>
                   )}
                 </AnimatePresence>
