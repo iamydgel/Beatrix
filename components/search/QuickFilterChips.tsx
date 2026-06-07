@@ -6,17 +6,17 @@ import {
   DribbbleIcon, 
   SparklesIcon, 
   ActivityIcon,
-  TrendingUpIcon,
-  CircleCheckIcon
+  FlameIcon,
+  ShieldCheckIcon,
+  ZapIcon
 } from 'lucide-animated';
 
 // Define the Filter Schema
 export interface FilterChip {
   id: string;
   label: string;
-  // Type as ElementType since lucide-animated uses ForwardRefExoticComponent
   icon: React.ElementType;
-  type: 'sport' | 'value' | 'confidence';
+  type: 'sport' | 'value' | 'confidence' | 'surchauffes';
 }
 
 interface QuickFilterChipsProps {
@@ -26,15 +26,18 @@ interface QuickFilterChipsProps {
   onValueBetsToggle: (show: boolean) => void;
   minConfidence: number | null;
   onMinConfidenceToggle: (minConf: number | null) => void;
+  showSurchauffes: boolean;
+  onSurchauffesToggle: (show: boolean) => void;
 }
 
 const FILTER_CHIPS: FilterChip[] = [
   { id: 'all', label: 'Tous', icon: SparklesIcon, type: 'sport' },
-  { id: 'football', label: 'Football', icon: TrophyIcon, type: 'sport' },
-  { id: 'basketball', label: 'Basketball', icon: DribbbleIcon, type: 'sport' },
-  { id: 'tennis', label: 'Tennis', icon: ActivityIcon, type: 'sport' },
-  { id: 'value_bets', label: 'Value Bets', icon: TrendingUpIcon, type: 'value' },
-  { id: 'high_confidence', label: 'Confiance > 80%', icon: CircleCheckIcon, type: 'confidence' }
+  { id: 'top_edge', label: '🔥 Top Edge', icon: FlameIcon, type: 'value' },
+  { id: 'high_confidence', label: '🛡️ Confiance > 80%', icon: ShieldCheckIcon, type: 'confidence' },
+  { id: 'surchauffes', label: '⚡ Surchauffés', icon: ZapIcon, type: 'surchauffes' },
+  { id: 'football', label: '⚽ Football', icon: TrophyIcon, type: 'sport' },
+  { id: 'basketball', label: '🏀 NBA', icon: DribbbleIcon, type: 'sport' },
+  { id: 'tennis', label: '🎾 Tennis', icon: ActivityIcon, type: 'sport' }
 ];
 
 export const QuickFilterChips = ({
@@ -44,6 +47,8 @@ export const QuickFilterChips = ({
   onValueBetsToggle,
   minConfidence,
   onMinConfidenceToggle,
+  showSurchauffes,
+  onSurchauffesToggle,
 }: QuickFilterChipsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -62,6 +67,8 @@ export const QuickFilterChips = ({
       onValueBetsToggle(!showOnlyValueBets);
     } else if (chip.type === 'confidence') {
       onMinConfidenceToggle(minConfidence ? null : 80);
+    } else if (chip.type === 'surchauffes') {
+      onSurchauffesToggle(!showSurchauffes);
     }
   };
 
@@ -74,6 +81,9 @@ export const QuickFilterChips = ({
     }
     if (chip.type === 'confidence') {
       return minConfidence !== null;
+    }
+    if (chip.type === 'surchauffes') {
+      return showSurchauffes;
     }
     return false;
   };

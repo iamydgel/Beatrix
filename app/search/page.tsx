@@ -148,6 +148,7 @@ export default function SearchPage() {
   const [selectedSport, setSelectedSport] = useState('all');
   const [showOnlyValueBets, setShowOnlyValueBets] = useState(false);
   const [minConfidence, setMinConfidence] = useState<number | null>(null);
+  const [showSurchauffes, setShowSurchauffes] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   const filteredAndSortedPicks = useMemo(() => {
@@ -167,39 +168,54 @@ export default function SearchPage() {
       // Confidence match
       const confidenceMatch = minConfidence === null || pick.confidence >= minConfidence;
 
-      return searchMatch && sportMatch && valueMatch && confidenceMatch;
+      // Surchauffes filter: High confidence & high probability
+      const surchauffesMatch = !showSurchauffes || (pick.confidence >= 85 && pick.beatrixProb >= 65);
+
+      return searchMatch && sportMatch && valueMatch && confidenceMatch && surchauffesMatch;
     }).sort((a, b) => {
       // Default: show highest edge first on explorer
       const edgeA = a.beatrixProb - a.bookmakerProb;
       const edgeB = b.beatrixProb - b.bookmakerProb;
       return edgeB - edgeA;
     });
-  }, [searchQuery, selectedSport, showOnlyValueBets, minConfidence]);
+  }, [searchQuery, selectedSport, showOnlyValueBets, minConfidence, showSurchauffes]);
 
   return (
     <div className="min-h-screen px-4 py-6 md:p-8 space-y-6 max-w-3xl mx-auto pb-24">
-      {/* Page Header */}
-      <header className="space-y-1.5">
-        <h1 className="text-2xl font-extrabold font-mono tracking-tight text-white uppercase">
-          Opportunity Explorer
+      {/* Page Header (Titre : Beatrix // Explorateur en uppercase, tracking serré) */}
+      <header className="space-y-1">
+        <h1 className="text-3xl font-extrabold font-mono tracking-tighter text-white uppercase">
+          Beatrix // Explorateur
         </h1>
-        <p className="text-xs text-text-secondary font-mono">
+        <p className="text-[10px] text-text-secondary font-mono uppercase tracking-wider">
           Feed d'opportunités en temps réel optimisé pour mobile.
         </p>
       </header>
 
-      {/* Svelte Search Bar */}
+      {/* Svelte Search Bar (with micro-vibration/shake on focus) */}
       <motion.div 
-        animate={{ 
-          borderColor: isSearchFocused ? "#00FF9F" : "rgba(255, 255, 255, 0.08)",
-          boxShadow: isSearchFocused ? "0 0 15px rgba(0, 255, 159, 0.1)" : "none"
+        animate={isSearchFocused ? { 
+          borderColor: "#00FF9F",
+          boxShadow: "0 0 15px rgba(0, 255, 159, 0.1)",
+          scale: 1.01,
+          x: [0, -1.5, 1.5, -1.5, 0]
+        } : {
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          boxShadow: "none",
+          scale: 1,
+          x: 0
         }}
-        transition={{ ease: [0.22, 1, 0.36, 1], duration: 0.4 }}
+        transition={isSearchFocused ? {
+          x: { duration: 0.15, ease: "easeInOut" },
+          default: { type: "spring", stiffness: 300, damping: 20 }
+        } : {
+          default: { type: "spring", stiffness: 300, damping: 20 }
+        }}
         className="relative flex items-center bg-[#121212]/40 border rounded-xl px-3 py-2.5"
       >
         <SearchIcon 
           size={16} 
-          className={`mr-2.5 transition-colors duration-300 ${isSearchFocused ? 'text-accent-neon' : 'text-text-secondary'}`} 
+          className={`mr-2.5 transition-colors duration-300 ${isSearchFocused ? 'text-accent-neon animate-pulse' : 'text-text-secondary'}`} 
         />
         <input
           type="text"
@@ -228,6 +244,8 @@ export default function SearchPage() {
         onValueBetsToggle={setShowOnlyValueBets}
         minConfidence={minConfidence}
         onMinConfidenceToggle={setMinConfidence}
+        showSurchauffes={showSurchauffes}
+        onSurchauffesToggle={setShowSurchauffes}
       />
 
       {/* Waterfall Staggered Feed */}
@@ -268,6 +286,7 @@ export default function SearchPage() {
               setSelectedSport('all');
               setShowOnlyValueBets(false);
               setMinConfidence(null);
+              setShowSurchauffes(false);
             }}
             className="mt-3 px-3 py-1.5 border border-white/10 rounded-lg hover:border-accent-neon hover:text-accent-neon transition-colors text-[10px] uppercase font-bold"
           >
