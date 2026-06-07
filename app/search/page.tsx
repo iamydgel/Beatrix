@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { PickCard, PickData } from '@/components/home/PickCard';
+import { QuickFilterChips } from '@/components/search/QuickFilterChips';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MOCK_PICKS: PickData[] = [
@@ -217,6 +218,13 @@ export default function SearchPage() {
               </button>
             )}
           </div>
+
+          <QuickFilterChips
+            selectedSport={selectedSport}
+            showOnlyValueBets={showOnlyValueBets}
+            onSportChange={setSelectedSport}
+            onValueBetChange={setShowOnlyValueBets}
+          />
 
           {/* Results Grid */}
           <motion.div
