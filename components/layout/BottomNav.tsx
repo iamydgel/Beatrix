@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Home, Search, BarChart3, User, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { usePalette } from "@/components/providers/PaletteProvider";
 
 const navItems = [
   { name: "Accueil", href: "/", icon: Home },
@@ -14,8 +15,9 @@ const navItems = [
   { name: "Profil", href: "/profile", icon: User },
 ];
 
-export default function BottomNav({ onPaletteOpen }: { onPaletteOpen?: (open: boolean) => void }) {
+export default function BottomNav() {
   const pathname = usePathname();
+  const { setIsOpen } = usePalette();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 bg-[#121212]/80 backdrop-blur-xl border-t border-white/10 flex items-center justify-around px-2 md:hidden">
@@ -47,7 +49,7 @@ export default function BottomNav({ onPaletteOpen }: { onPaletteOpen?: (open: bo
       </div>
 
       <button
-        onClick={() => onPaletteOpen?.(true)}
+        onClick={() => setIsOpen(true)}
         className="relative flex items-center justify-center w-12 h-12 mx-2 bg-gradient-to-br from-[#00FF9F] to-[#00B37E] rounded-full shadow-lg shadow-[#00FF9F]/20 active:scale-90 transition-transform"
         aria-label="Command Palette"
       >
