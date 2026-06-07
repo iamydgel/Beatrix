@@ -137,9 +137,8 @@ const itemVariants = {
     opacity: 1, 
     y: 0, 
     transition: { 
-      type: 'spring', 
-      stiffness: 150, 
-      damping: 18 
+      ease: [0.22, 1, 0.36, 1],
+      duration: 0.6
     } 
   }
 } as const;
@@ -195,7 +194,7 @@ export default function SearchPage() {
           borderColor: isSearchFocused ? "#00FF9F" : "rgba(255, 255, 255, 0.08)",
           boxShadow: isSearchFocused ? "0 0 15px rgba(0, 255, 159, 0.1)" : "none"
         }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        transition={{ ease: [0.22, 1, 0.36, 1], duration: 0.4 }}
         className="relative flex items-center bg-[#121212]/40 border rounded-xl px-3 py-2.5"
       >
         <SearchIcon 
@@ -246,8 +245,8 @@ export default function SearchPage() {
               layout
               initial="hidden"
               animate="show"
-              exit={{ scale: 0.95, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 140, damping: 18 }}
+              exit={{ scale: 0.95, opacity: 0, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}
+              transition={{ layout: { type: "spring", stiffness: 180, damping: 22 } }}
             >
               <PickCard pick={pick} />
             </motion.div>
