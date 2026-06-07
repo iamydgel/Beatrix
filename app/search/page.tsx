@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { SearchIcon } from 'lucide-animated';
-import { QuickFilterChips } from '@/components/search/QuickFilterChips';
+import { Search } from 'lucide-react';
 import { PickCard, PickData } from '@/components/home/PickCard';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -126,33 +125,27 @@ const containerVariants = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.04
+      staggerChildren: 0.05
     }
   }
 } as const;
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { 
-      ease: [0.22, 1, 0.36, 1],
-      duration: 0.6
-    } 
-  }
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 120 } }
 } as const;
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSport, setSelectedSport] = useState('all');
+  const [selectedLeague, setSelectedLeague] = useState('all');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('all');
   const [showOnlyValueBets, setShowOnlyValueBets] = useState(false);
-  const [minConfidence, setMinConfidence] = useState<number | null>(null);
-  const [showSurchauffes, setShowSurchauffes] = useState(false);
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  // const [sortBy, setSortBy] = useState('date');
 
   const filteredAndSortedPicks = useMemo(() => {
-    return MOCK_PICKS.filter((pick) => {
+    // 1. Filtering
+    let results = MOCK_PICKS.filter((pick) => {
       // Search query match
       const searchMatch =
         pick.homeTeam.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -162,148 +155,116 @@ export default function SearchPage() {
       // Sport match
       const sportMatch = selectedSport === 'all' || pick.sport === selectedSport;
 
+      // League match
+      const leagueMatch = selectedLeague === 'all' || pick.league === selectedLeague;
+
       // Value bets only match
       const valueMatch = !showOnlyValueBets || pick.isValueBet;
 
-      // Confidence match
-      const confidenceMatch = minConfidence === null || pick.confidence >= minConfidence;
+      // Timeframe match
+      let timeframeMatch = true;
+      if (selectedTimeframe === 'today') {
+        timeframeMatch = pick.date.includes("Aujourd'hui");
+      } else if (selectedTimeframe === 'tomorrow') {
+        timeframeMatch = pick.date.includes("Demain");
+      } else if (selectedTimeframe === 'week') {
+        timeframeMatch = !pick.date.includes("Dans 3 jours"); // Rough logic based on mock dates
+      }
 
-      // Surchauffes filter: High confidence & high probability
-      const surchauffesMatch = !showSurchauffes || (pick.confidence >= 85 && pick.beatrixProb >= 65);
-
-      return searchMatch && sportMatch && valueMatch && confidenceMatch && surchauffesMatch;
-    }).sort((a, b) => {
-      // Default: show highest edge first on explorer
-      const edgeA = a.beatrixProb - a.bookmakerProb;
-      const edgeB = b.beatrixProb - b.bookmakerProb;
-      return edgeB - edgeA;
+      return searchMatch && sportMatch && leagueMatch && valueMatch && timeframeMatch;
     });
-  }, [searchQuery, selectedSport, showOnlyValueBets, minConfidence, showSurchauffes]);
+
+    // 2. Sorting
+    results.sort((a, b) => {
+      // Default / chronological order
+      return a.id.localeCompare(b.id);
+    });
+
+    return results;
+  }, [searchQuery, selectedSport, selectedLeague, selectedTimeframe, showOnlyValueBets]);
 
   return (
-    <div className="min-h-screen px-4 py-6 md:p-8 space-y-6 max-w-3xl mx-auto pb-24">
-      {/* Page Header (Titre : Beatrix // Explorateur en uppercase, tracking serré) */}
-      <header className="space-y-1">
-        <h1 className="text-3xl font-extrabold font-mono tracking-tighter text-white uppercase">
-          Beatrix // Explorateur
+    <div className="min-h-screen p-8 md:p-12 space-y-8 max-w-7xl mx-auto">
+      {/* Page Header */}
+      <header className="space-y-2 border-b border-white/5 pb-4">
+        <h1 className="text-3xl font-extrabold font-mono tracking-tight text-white uppercase">
+          Recherche & Découverte
         </h1>
-        <p className="text-[10px] text-text-secondary font-mono uppercase tracking-wider">
-          Feed d'opportunités en temps réel optimisé pour mobile.
+        <p className="text-sm text-text-secondary font-mono">
+          Explorez et filtrez l'intégralité du catalogue d'opportunités probabilistes.
         </p>
       </header>
 
-      {/* Svelte Search Bar (with micro-vibration/shake on focus) */}
-      <motion.div 
-        animate={isSearchFocused ? { 
-          borderColor: "#00FF9F",
-          boxShadow: "0 0 15px rgba(0, 255, 159, 0.1)",
-          scale: 1.01,
-          x: [0, -1.5, 1.5, -1.5, 0]
-        } : {
-          borderColor: "rgba(255, 255, 255, 0.08)",
-          boxShadow: "none",
-          scale: 1,
-          x: 0
-        }}
-        transition={isSearchFocused ? {
-          x: { duration: 0.15, ease: "easeInOut" },
-          default: { type: "spring", stiffness: 300, damping: 20 }
-        } : {
-          default: { type: "spring", stiffness: 300, damping: 20 }
-        }}
-        className="relative flex items-center bg-[#121212]/40 border rounded-xl px-3 py-2.5"
-      >
-        <SearchIcon 
-          size={16} 
-          className={`mr-2.5 transition-colors duration-300 ${isSearchFocused ? 'text-accent-neon animate-pulse' : 'text-text-secondary'}`} 
-        />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onFocus={() => setIsSearchFocused(true)}
-          onBlur={() => setIsSearchFocused(false)}
-          placeholder="Rechercher équipe, match..."
-          className="w-full bg-transparent text-white outline-none font-mono text-xs placeholder:text-text-secondary"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery('')}
-            className="text-text-secondary hover:text-white text-[10px] font-mono px-1"
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Search Results Area */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Search Input Bar */}
+          <div className="relative flex items-center bg-[#121212]/40 border border-white/10 rounded-xl px-4 py-3 focus-within:border-accent-neon transition-colors">
+            <Search className="text-text-secondary mr-3" size={18} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Rechercher une équipe, un match, une ligue..."
+              className="w-full bg-transparent text-white outline-none font-mono text-sm placeholder:text-text-secondary"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-text-secondary hover:text-white text-xs font-mono"
+              >
+                EFFACER
+              </button>
+            )}
+          </div>
+
+          {/* Results Grid */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
-            EFFACER
-          </button>
-        )}
-      </motion.div>
+            <AnimatePresence mode="popLayout">
+              {filteredAndSortedPicks.map((pick) => (
+                <motion.div
+                  key={pick.id}
+                  variants={itemVariants}
+                  layout
+                  initial="hidden"
+                  animate="show"
+                  exit={{ scale: 0.9, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                >
+                  <PickCard pick={pick} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
 
-      {/* Quick-Filter Ruban */}
-      <QuickFilterChips 
-        selectedSport={selectedSport}
-        onSportChange={setSelectedSport}
-        showOnlyValueBets={showOnlyValueBets}
-        onValueBetsToggle={setShowOnlyValueBets}
-        minConfidence={minConfidence}
-        onMinConfidenceToggle={setMinConfidence}
-        showSurchauffes={showSurchauffes}
-        onSurchauffesToggle={setShowSurchauffes}
-      />
-
-      {/* Waterfall Staggered Feed */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="flex flex-col gap-4"
-      >
-        <AnimatePresence mode="popLayout">
-          {filteredAndSortedPicks.map((pick) => (
+          {/* Empty State */}
+          {filteredAndSortedPicks.length === 0 && (
             <motion.div
-              key={pick.id}
-              variants={itemVariants}
-              layout
-              initial="hidden"
-              animate="show"
-              exit={{ scale: 0.95, opacity: 0, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}
-              transition={{ layout: { type: "spring", stiffness: 180, damping: 22 } }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-20 border border-white/5 rounded-2xl bg-[#121212]/20 font-mono text-text-secondary"
             >
-              <PickCard pick={pick} />
+              <p className="text-sm">Aucun résultat ne correspond à vos critères de recherche.</p>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedSport('all');
+                  setSelectedLeague('all');
+                  setSelectedTimeframe('all');
+                  setShowOnlyValueBets(false);
+                }}
+                className="mt-4 px-4 py-2 border border-white/10 rounded-lg hover:border-accent-neon hover:text-accent-neon transition-colors text-xs uppercase"
+              >
+                Réinitialiser les filtres
+              </button>
             </motion.div>
-          ))}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* Empty State */}
-      {filteredAndSortedPicks.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-16 border border-white/5 rounded-xl bg-[#121212]/20 font-mono text-text-secondary"
-        >
-          <p className="text-xs">Aucune opportunité ne correspond aux critères.</p>
-          <button
-            onClick={() => {
-              setSearchQuery('');
-              setSelectedSport('all');
-              setShowOnlyValueBets(false);
-              setMinConfidence(null);
-              setShowSurchauffes(false);
-            }}
-            className="mt-3 px-3 py-1.5 border border-white/10 rounded-lg hover:border-accent-neon hover:text-accent-neon transition-colors text-[10px] uppercase font-bold"
-          >
-            Réinitialiser
-          </button>
-        </motion.div>
-      )}
-
-      {/* Activity Indicator (Floating Bottom Badge) */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#121212]/90 backdrop-blur-md border border-white/10 rounded-full px-4 py-2 flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00FF9F] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00FF9F]"></span>
-        </span>
-        <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-white">
-          Moteur d'analyse : <span className="text-[#00FF9F]">Actif</span>
-        </span>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { motion, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
-import { cn } from '@/lib/utils';
 
 interface NeonCardProps {
   children: React.ReactNode;
@@ -30,10 +29,7 @@ export const NeonCard = ({ children, className = "" }: NeonCardProps) => {
   return (
     <div
       onMouseMove={handleMouseMove}
-      className={cn(
-        "relative group rounded-xl border border-white/10 bg-[#121212] p-6 backdrop-blur-sm transition-all duration-300 hover:border-accent-neon/40",
-        className
-      )}
+      className={`relative group rounded-xl border border-white/10 bg-[#121212] p-6 backdrop-blur-sm transition-all duration-300 hover:border-accent-neon/40 ${className}`}
     >
       {/* Spotlight Effect (Zero State-Update) */}
       <motion.div
