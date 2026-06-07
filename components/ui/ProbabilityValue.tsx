@@ -49,7 +49,10 @@ export const ProbabilityValue = ({ value, isValueBet }: ProbabilityValueProps) =
 
       {/* Halo glow effect for value bets */}
       {isValueBet && (
-        <div className="absolute inset-0 blur-xl bg-accent-neon/20 pointer-events-none rounded-full" />
+        <div
+          data-testid="probability-glow"
+          className="absolute inset-0 blur-xl bg-accent-neon/20 pointer-events-none rounded-full"
+        />
       )}
     </div>
   );
