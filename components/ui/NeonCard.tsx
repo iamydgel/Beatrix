@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, useMotionValue, useSpring, useMotionValueEvent } from 'framer-motion';
 
 interface NeonCardProps {
   children: React.ReactNode;
@@ -17,28 +17,15 @@ export const NeonCard = ({ children, className = "" }: NeonCardProps) => {
   const smoothX = useSpring(mouseX, { stiffness: 300, damping: 30 });
   const smoothY = useSpring(mouseY, { stiffness: 300, damping: 30 });
 
-  // We use a state or useEffect to handle the style update since
-  // radial-gradient doesn't natively accept MotionValues in CSS strings
-  // and the provided plan had a slight logic gap in the style attribute.
+  // We update state only when the smooth X changes, and read the latest smooth Y at that moment.
+  // This produces a single setState per frame instead of two.
   const [spotlightStyle, setSpotlightStyle] = useState({ background: '' });
 
-  useEffect(() => {
-    const unsubscribeX = smoothX.on("change", (latest) => {
-      setSpotlightStyle({
-        background: `radial-gradient(600px circle at ${latest}px ${smoothY.get()}px, rgba(0, 255, 159, 0.08), transparent 40%)`
-      });
+  useMotionValueEvent(smoothX, "change", (latestX) => {
+    setSpotlightStyle({
+      background: `radial-gradient(600px circle at ${latestX}px ${smoothY.get()}px, rgba(0, 255, 159, 0.08), transparent 40%)`
     });
-    const unsubscribeY = smoothY.on("change", (latest) => {
-      setSpotlightStyle({
-        background: `radial-gradient(600px circle at ${smoothX.get()}px ${latest}px, rgba(0, 255, 159, 0.08), transparent 40%)`
-      });
-    });
-
-    return () => {
-      unsubscribeX();
-      unsubscribeY();
-    };
-  }, [smoothX, smoothY]);
+  });
 
   function handleMouseMove({ clientX, clientY, currentTarget }: React.MouseEvent<HTMLDivElement>) {
     const { left, top } = currentTarget.getBoundingClientRect();
@@ -57,7 +44,7 @@ export const NeonCard = ({ children, className = "" }: NeonCardProps) => {
         style={spotlightStyle}
       />
 
-      {/* Dynamic Border Glow (using an absolute inner border for better control) */}
+      {/* Dynamic Border Glow */}
       <div className="absolute inset-0 rounded-xl border border-transparent transition-all duration-300 group-hover:border-accent-neon/20 group-hover:shadow-[0_0_15px_rgba(0,255,159,0.1)] pointer-events-none" />
 
       <div className="relative z-10">
