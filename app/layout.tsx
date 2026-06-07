@@ -36,7 +36,7 @@ export default function RootLayout({
         <PaletteProvider>
           <div className="flex min-h-screen">
             <Sidebar />
-            <main className="flex-1 transition-all duration-300 pl-0 md:pl-16 pb-16 md:pb-0">
+            <main className="flex-1 transition-all duration-300 pl-0 md:pl-16 pb-20 md:pb-0 min-h-screen overflow-x-hidden">
               {children}
             </main>
             <BottomNav />

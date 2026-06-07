@@ -7,3 +7,16 @@
   --color-text-primary: #FFFFFF;
   --color-text-secondary: #888888;
 }
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  ::selection {
+    background-color: rgba(0, 255, 159, 0.2);
+    color: #00FF9F;
+  }
+}

@@ -1,0 +1,91 @@
+# Mobile Explorer Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Transform the `/search` route from a generic search page into a high-precision "Opportunity Explorer" for mobile users.
+
+**Architecture:**
+A mobile-first "Value Feed" where the primary intent is discovery. It replaces a traditional filter-sidebar with a horizontal "Quick-Filter" ruban and a staggered list of high-density `PickCard` components integrated with the UI Precision Kit.
+
+**Tech Stack:** Next.js 16, React 19, Tailwind CSS v4, Framer Motion, Lucide-Animated, ReactBits.
+
+---
+
+### Task 1: Technical Validation & Setup
+Before touching the UI, we must ensure the environment is aligned with the latest versions.
+
+- [ ] **Step 1: Validate Stack with Context7**
+Run a query to confirm the exact implementation patterns for:
+1. Next.js 16 `params` as Promises.
+2. Tailwind v4 `@theme` custom variable usage.
+3. React 19 `use` hook or new ref patterns if needed.
+- [ ] **Step 2: Commit validation check**
+`git commit -m "chore: validate tech stack for mobile explorer"`
+
+### Task 2: High-Density `PickCard` Refactor
+The card must evolve from a "display" to an "instrument".
+
+**Files:**
+- Modify: `components/home/PickCard.tsx`
+- Components to integrate: `components/ui/ProbabilityValue.tsx`, `components/ui/ConfidenceBar.tsx`, `components/ui/StatusIcon.tsx`
+
+- [ ] **Step 1: Create a failing test for the "Value Bet" visual state**
+(Mock the prop `isValueBet: true` and assert that the `ProbabilityValue` component is rendered with the 'glow' variant).
+- [ ] **Step 2: Refactor layout for High Density**
+Remove excessive padding, use `JetBrains Mono` for all numbers, and align the `ConfidenceBar` horizontally with the team names.
+- [ ] **Step 3: Integrate Precision Components**
+Replace static probability text with `<ProbabilityValue />` and add `<ConfidenceBar />` and `<StatusIcon />`.
+- [ ] **Step 4: Implement "Swipe-to-Watch" interaction**
+Add a `framer-motion` drag constraint to the card for a quick "Add to Watchlist" action.
+- [ ] **Step 5: Commit**
+`git commit -m "feat(ui): refactor PickCard to high-density precision instrument"`
+
+### Task 3: The Quick-Filter Ruban (`QuickFilterChips`)
+Replacing the `FilterPanel` with a high-performance horizontal scroller.
+
+**Files:**
+- Create: `components/search/QuickFilterChips.tsx`
+
+- [ ] **Step 1: Define the Filter Schema**
+Create a type for filters: `{ id: string, label: string, icon: LucideIcon, type: 'sport' | 'value' | 'confidence' }`.
+- [ ] **Step 2: Implement the Horizontal Scroll Container**
+Build a `div` with `overflow-x-auto` and `scrollbar-hide`, ensuring a snap-to-center feel on mobile.
+- [ ] **Step 3: Build the Chip Component**
+Implement the `accent-neon` active state and integrate `lucide-animated` icons that trigger animation on selection.
+- [ ] **Step 4: Connect to Search State**
+Ensure clicking a chip updates the `selectedSport` or `showOnlyValueBets` state in the parent page.
+- [ ] **Step s5: Commit**
+`git commit -m "feat(search): implement QuickFilterChips ruban with lucide-animated"`
+
+### Task 4: The Explorer Feed (`app/search/page.tsx`)
+Assembling the "Dynamic Value Feed".
+
+**Files:**
+- Modify: `app/search/page.tsx`
+- Remove: `components/search/FilterPanel.tsx` (from the layout)
+
+- [ ] **Step 1: Implement the "Svelte" Search Bar**
+Replace the current input with a minimal version that expands with a `framer-motion` spring animation and a `lucide-animated` search icon.
+- [ ] **Step 2: Integrate the Ruban**
+Place `<QuickFilterChips />` immediately below the header.
+- [ ] **Step 3: Implement the Staggered Feed**
+Wrap the `PickCard` map in a `motion.div` using `variants` to create a "waterfall" entry effect (staggerChildren).
+- [ ] **Step 4: Implement the Activity Indicator**
+Add the floating bottom badge `Moteur d'analyse : Actif` with a pulsing green dot.
+- [ ] **Step 5: Commit**
+`git commit -m "feat(search): transform search page into Mobile Explorer feed"`
+
+### Task 5: Luxury Polish & Verification
+Applying the final "Production-Grade" layer.
+
+- [ ] **Step 1: Apply Glassmorphism & Grain**
+Add `backdrop-blur` and subtle noise textures to the sticky header and chips using Tailwind v4 utilities.
+- [ ] **Step 2: Fine-tune Motion Curves**
+Adjust all `framer-motion` transitions to use `[0.22, 1, 0.36, 1]` (Quintic) for that "Apple/Linear" luxury feel.
+- [ ] **Step 3: Verification Pass**
+Test the full flow on a mobile viewport:
+  1. Open `/search` $\rightarrow$ Observe staggered entry.
+  2. Click `Top Edge` chip $\rightarrow$ Observe instant filtered update.
+  3. Interact with `ProbabilityValue` $\rightarrow$ Verify animated count-up.
+- [ ] **Step 4: Final Commit**
+`git commit -m "style(search): apply production-grade luxury polish to explorer"`

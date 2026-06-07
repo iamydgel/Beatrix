@@ -6,6 +6,13 @@
         "shadcn@latest",
         "mcp"
       ]
+    },
+    "awesome-design": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-awesome-design"
+      ]
     }
   }
 }

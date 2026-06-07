@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
-import { motion, useMotionValue, useSpring, useMotionValueEvent } from 'framer-motion';
+import React from 'react';
+import { motion, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
 
 interface NeonCardProps {
   children: React.ReactNode;
@@ -9,7 +9,7 @@ interface NeonCardProps {
 }
 
 export const NeonCard = ({ children, className = "" }: NeonCardProps) => {
-  // Motion values for mouse position to avoid constant re-renders
+  // Motion values for mouse position
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -17,15 +17,8 @@ export const NeonCard = ({ children, className = "" }: NeonCardProps) => {
   const smoothX = useSpring(mouseX, { stiffness: 300, damping: 30 });
   const smoothY = useSpring(mouseY, { stiffness: 300, damping: 30 });
 
-  // We update state only when the smooth X changes, and read the latest smooth Y at that moment.
-  // This produces a single setState per frame instead of two.
-  const [spotlightStyle, setSpotlightStyle] = useState({ background: '' });
-
-  useMotionValueEvent(smoothX, "change", (latestX) => {
-    setSpotlightStyle({
-      background: `radial-gradient(600px circle at ${latestX}px ${smoothY.get()}px, rgba(0, 255, 159, 0.08), transparent 40%)`
-    });
-  });
+  // Use motion template to bind background style dynamically without React state updates (60fps performance)
+  const background = useMotionTemplate`radial-gradient(600px circle at ${smoothX}px ${smoothY}px, rgba(0, 255, 159, 0.08), transparent 40%)`;
 
   function handleMouseMove({ clientX, clientY, currentTarget }: React.MouseEvent<HTMLDivElement>) {
     const { left, top } = currentTarget.getBoundingClientRect();
@@ -38,10 +31,10 @@ export const NeonCard = ({ children, className = "" }: NeonCardProps) => {
       onMouseMove={handleMouseMove}
       className={`relative group rounded-xl border border-white/10 bg-[#121212] p-6 backdrop-blur-sm transition-all duration-300 hover:border-accent-neon/40 ${className}`}
     >
-      {/* Spotlight Effect */}
-      <div
+      {/* Spotlight Effect (Zero State-Update) */}
+      <motion.div
         className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-        style={spotlightStyle}
+        style={{ background }}
       />
 
       {/* Dynamic Border Glow */}

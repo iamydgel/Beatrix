@@ -11,8 +11,8 @@ interface ProbabilityValueProps {
 export const ProbabilityValue = ({ value, isValueBet }: ProbabilityValueProps) => {
   // High-precision spring for a smooth "counting" feel
   const spring = useSpring(0, {
-    stiffness: 60,
-    damping: 20,
+    stiffness: isValueBet ? 85 : 55,
+    damping: isValueBet ? 15 : 20,
     mass: 1
   });
 

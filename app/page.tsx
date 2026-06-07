@@ -1,47 +1,41 @@
+import React from 'react';
+import { TopPicksGrid } from "@/components/home/TopPicksGrid";
+
 export default function Page() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-background text-text-primary">
-      <div className="max-w-2xl w-full space-y-8">
-        <header className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tighter">
-            Beatrix <span className="text-accent-neon">// Probabilités</span>
-          </h1>
-          <p className="text-text-secondary text-lg">
-            Vérification du thème Precision Dark
-          </p>
-        </header>
+    <div className="min-h-screen p-8 md:p-12 space-y-12 max-w-7xl mx-auto relative">
+      {/* Grid Pattern Background */}
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#1f1f1f_1px,transparent_1px),linear-gradient(to_bottom,#1f1f1f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-6 rounded-xl bg-surface border border-white/10 space-y-4">
-            <h2 className="text-sm font-medium text-text-secondary uppercase tracking-widest">
-              Test de Surface
-            </h2>
-            <div className="text-3xl font-mono text-accent-neon">
-              74.2%
-            </div>
-            <p className="text-sm text-text-secondary">
-              Probabilité prédite par le moteur d'analyse.
-            </p>
+      {/* Hero Section */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/5">
+        <div className="space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent-neon/10 border border-accent-neon/20 rounded-full text-xs font-mono text-accent-neon uppercase tracking-wider">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-neon animate-pulse" />
+            Moteur Probabiliste Actif
           </div>
-
-          <div className="p-6 rounded-xl bg-surface border border-white/10 space-y-4">
-            <h2 className="text-sm font-medium text-text-secondary uppercase tracking-widest">
-              Test d'Accent
-            </h2>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-accent-neon animate-pulse" />
-              <span className="font-mono text-accent-neon">VALUE BET DETECTED</span>
-            </div>
-            <p className="text-sm text-text-secondary">
-              L'accent néon doit être clairement visible sur le fond sombre. (Vérifié ✅)
-            </p>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight font-mono text-white leading-none">
+            BEATRIX <span className="text-accent-neon">// PROBABILITÉS</span>
+          </h1>
+          <p className="text-sm md:text-base text-text-secondary max-w-xl font-mono">
+            Optimisation et détection algorithmique de Value Bets. L'instrument de décision ultime pour les parieurs professionnels.
+          </p>
+        </div>
+        <div className="flex gap-4 items-center">
+          <div className="text-right">
+            <span className="text-[10px] font-mono text-text-secondary uppercase block">
+              Algorithmes Actifs
+            </span>
+            <span className="text-sm font-mono font-bold text-white block">
+              Poisson / Monte Carlo
+            </span>
           </div>
         </div>
+      </header>
 
-        <footer className="pt-8 text-center text-xs text-text-secondary font-mono">
-          Système Beatrix v1.0 // 2026
-        </footer>
-      </div>
+      {/* Main Grid Content */}
+      <TopPicksGrid />
     </div>
   );
 }
+
