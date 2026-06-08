@@ -245,9 +245,11 @@ export default function SearchPage() {
         <div className="py-2">
           <QuickFilterChips
             selectedSport={selectedSport}
+            selectedTimeframe={selectedTimeframe}
             showOnlyValueBets={showOnlyValueBets}
             showHighConfidence={showHighConfidence}
             onSportChange={setSelectedSport}
+            onTimeframeChange={setSelectedTimeframe}
             onValueBetChange={setShowOnlyValueBets}
             onConfidenceChange={setShowHighConfidence}
           />

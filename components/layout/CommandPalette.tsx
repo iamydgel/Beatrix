@@ -65,27 +65,39 @@ export default function CommandPalette() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-4 md:p-4 flex-1 overflow-y-auto pb-24 md:pb-4">
-                <input
-                  autoFocus
-                  type="text"
-                  value={query}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setQuery(val);
-                    if (val === "/guide") {
-                      setIsGuideOpen(true);
-                      setQuery("");
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && query === '/guide') {
-                      setIsGuideOpen(true);
-                      setQuery("");
-                    }
-                  }}
-                  placeholder="Search for anything..."
-                  className="w-full bg-transparent text-white outline-none text-lg font-mono placeholder:text-text-secondary"
-                />
+                <div className="relative flex items-center gap-3 border-b border-white/10 pb-4 mb-2">
+                  <div className="relative flex items-center justify-center">
+                    <motion.div
+                      animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                      className="absolute w-2 h-2 bg-accent-neon rounded-full blur-[2px]"
+                    />
+                    <div className="w-2 h-2 bg-accent-neon rounded-full shadow-[0_0_10px_#00FF9F]" />
+                  </div>
+                  <input
+                    autoFocus
+                    type="text"
+                    value={query}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setQuery(val);
+                      if (val === "/guide") {
+                        setIsGuideOpen(true);
+                        setQuery("");
+                      }
+                    }}
+                    placeholder="Saisissez une commande ou recherchez un match..."
+                    className="w-full bg-transparent text-white outline-none text-base font-mono placeholder:text-text-secondary/30 caret-accent-neon"
+                  />
+                  {query && (
+                    <button 
+                      onClick={() => setQuery("")}
+                      className="text-[10px] font-mono text-text-secondary hover:text-white uppercase tracking-tighter"
+                    >
+                      Effacer
+                    </button>
+                  )}
+                </div>
 
                 <div className="mt-4">
                   <AnimatePresence mode="wait">

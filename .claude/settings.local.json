@@ -38,7 +38,11 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\emsjo\\\\Documents\\\\VETERENT\\\\APP\\\\WEB\\\\Beatrix\" -Directory)",
       "Bash(Select-Object Name)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\emsjo\\\\Documents\\\\VETERENT\\\\APP\\\\WEB\\\\Beatrix\" -File -Force)",
-      "Bash(Select-Object Name, Length)"
+      "Bash(Select-Object Name, Length)",
+      "Bash(New-Item -ItemType File -Path components/home/PickCard.test.tsx)",
+      "PowerShell(npm test components/home/PickCard.test.tsx)",
+      "PowerShell(npx vitest run components/home/PickCard.test.tsx)",
+      "PowerShell(npx vitest run components/home/PickCard.test.tsx --alias '@/components/ui/NeonCard=C:/Users/emsjo/Documents/VETERENT/APP/WEB/Beatrix/components/ui/NeonCard.tsx')"
     ]
   },
   "enableAllProjectMcpServers": true,

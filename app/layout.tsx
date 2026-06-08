@@ -4,6 +4,7 @@ import "./globals.css";
 import Sidebar from "@/components/layout/Sidebar";
 import BottomNav from "@/components/layout/BottomNav";
 import { PaletteProvider } from "@/components/providers/PaletteProvider";
+import { WatchlistProvider } from "@/lib/watchlist-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,13 +35,15 @@ export default function RootLayout({
     <html lang="fr">
       <body className={`font-sans ${geistSans.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased bg-[#0A0A0A] text-white`}>
         <PaletteProvider>
-          <div className="flex min-h-screen">
-            <Sidebar />
-            <main className="flex-1 transition-all duration-300 pl-0 md:pl-16 pb-20 md:pb-0 min-h-screen overflow-x-hidden">
-              {children}
-            </main>
-            <BottomNav />
-          </div>
+          <WatchlistProvider>
+            <div className="flex min-h-screen">
+              <Sidebar />
+              <main className="flex-1 transition-all duration-300 pl-0 md:pl-16 pb-20 md:pb-0 min-h-screen overflow-x-hidden">
+                {children}
+              </main>
+              <BottomNav />
+            </div>
+          </WatchlistProvider>
         </PaletteProvider>
       </body>
     </html>

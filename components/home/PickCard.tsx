@@ -5,8 +5,9 @@ import { NeonCard } from '@/components/ui/NeonCard';
 import { ProbabilityValue } from '@/components/ui/ProbabilityValue';
 import { ConfidenceBar } from '@/components/ui/ConfidenceBar';
 import { StatusIcon } from '@/components/ui/StatusIcon';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Bookmark, BookmarkCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useWatchlist } from '@/lib/watchlist-context';
 
 export interface PickData {
   id: string;
@@ -28,6 +29,8 @@ interface PickCardProps {
 }
 
 export const PickCard = ({ pick }: PickCardProps) => {
+  const { addToWatchlist, isInWatchlist } = useWatchlist();
+  const isBookmarked = isInWatchlist(pick.id);
   const edge = (pick.beatrixProb - pick.bookmakerProb).toFixed(1);
   const edgeValue = parseFloat(edge);
 
@@ -38,13 +41,20 @@ export const PickCard = ({ pick }: PickCardProps) => {
       dragElastic={0.1}
       onDragEnd={(_, info) => {
         if (info.offset.x > 80) {
-          console.log(`Match ${pick.id} added to watchlist`);
-          // Integration with watchlist store would go here
+          addToWatchlist(pick.id);
         }
       }}
       className="relative"
     >
-      <NeonCard className="flex flex-col justify-between h-full min-h-[220px] p-3">
+      {/* Swipe Indicator (Visible behind during drag) */}
+      <div className="absolute left-0 top-0 bottom-0 w-24 flex items-center justify-start pl-6 pointer-events-none -z-10">
+        <div className="flex flex-col items-center gap-1">
+          <Bookmark className="text-accent-neon animate-pulse" size={16} />
+          <span className="text-[8px] font-mono text-accent-neon uppercase tracking-tighter">Save</span>
+        </div>
+      </div>
+
+      <NeonCard className={`flex flex-col justify-between h-full min-h-[220px] p-3 transition-colors duration-500 ${isBookmarked ? 'border-accent-neon/30 bg-accent-neon/[0.02]' : ''}`}>
         <div className="space-y-3">
           {/* Card Header */}
           <div className="flex justify-between items-center">
@@ -56,7 +66,18 @@ export const PickCard = ({ pick }: PickCardProps) => {
                 {pick.date}
               </p>
             </div>
-            <StatusIcon type={pick.status} size={14} />
+            <div className="flex items-center gap-2">
+              {isBookmarked && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="text-accent-neon"
+                >
+                  <BookmarkCheck size={14} />
+                </motion.div>
+              )}
+              <StatusIcon type={pick.status} size={14} />
+            </div>
           </div>
 
           {/* Teams & Confidence Bar */}
@@ -115,13 +136,6 @@ export const PickCard = ({ pick }: PickCardProps) => {
           </Link>
         </div>
       </NeonCard>
-
-      {/* Swipe Indicator */}
-      <div className="absolute right-0 top-0 bottom-0 w-12 flex items-center justify-center pointer-events-none">
-        <div className="text-[8px] font-mono text-accent-neon/40 rotate-90 uppercase tracking-widest">
-          Watchlist
-        </div>
-      </div>
     </motion.div>
   );
 }

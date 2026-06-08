@@ -3,49 +3,54 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Trophy,
-  Zap,
-  Target,
-  Activity,
-  Flame,
-  ShieldCheck,
-  type LucideIcon
-} from 'lucide-react';
+  ZapIcon,
+  SearchIcon,
+  ActivityIcon,
+  ShieldCheckIcon,
+  CalendarDaysIcon,
+  AlarmClockIcon,
+} from 'lucide-animated';
 
-export type FilterType = 'sport' | 'value' | 'confidence';
+export type FilterType = 'sport' | 'value' | 'confidence' | 'timeframe';
 
 export interface FilterChip {
   id: string;
   label: string;
-  icon: LucideIcon;
+  icon: any;
   type: FilterType;
 }
 
 interface QuickFilterChipsProps {
   selectedSport: string;
+  selectedTimeframe: string;
   showOnlyValueBets: boolean;
   showHighConfidence: boolean;
   onSportChange: (sport: string) => void;
+  onTimeframeChange: (timeframe: string) => void;
   onValueBetChange: (value: boolean) => void;
   onConfidenceChange: (value: boolean) => void;
 }
 
 const FILTERS: FilterChip[] = [
-  { id: 'all', label: 'Tous', icon: Activity, type: 'sport' },
-  { id: 'football', label: 'Football', icon: Trophy, type: 'sport' },
-  { id: 'basketball', label: 'Basketball', icon: Target, type: 'sport' },
-  { id: 'tennis', label: 'Tennis', icon: Flame, type: 'sport' },
-  { id: 'value', label: 'Value Bets', icon: Zap, type: 'value' },
-  { id: 'confidence', label: 'Haute Confiance', icon: ShieldCheck, type: 'confidence' },
+  { id: 'all', label: 'Tous', icon: ActivityIcon, type: 'sport' },
+  { id: 'today', label: "Aujourd'hui", icon: AlarmClockIcon, type: 'timeframe' },
+  { id: 'tomorrow', label: 'Demain', icon: CalendarDaysIcon, type: 'timeframe' },
+  { id: 'football', label: 'Football', icon: ActivityIcon, type: 'sport' },
+  { id: 'basketball', label: 'Basketball', icon: ZapIcon, type: 'sport' },
+  { id: 'tennis', label: 'Tennis', icon: ZapIcon, type: 'sport' },
+  { id: 'value', label: 'Value Bets', icon: ZapIcon, type: 'value' },
+  { id: 'confidence', label: 'Haute Confiance', icon: ShieldCheckIcon, type: 'confidence' },
 ];
 
 const BEZIER_CURVE = [0.22, 1, 0.36, 1];
 
 export const QuickFilterChips: React.FC<QuickFilterChipsProps> = ({
   selectedSport,
+  selectedTimeframe,
   showOnlyValueBets,
   showHighConfidence,
   onSportChange,
+  onTimeframeChange,
   onValueBetChange,
   onConfidenceChange,
 }) => {
@@ -63,8 +68,9 @@ export const QuickFilterChips: React.FC<QuickFilterChipsProps> = ({
         {FILTERS.map((filter) => {
           const isActive =
             (filter.type === 'sport' && selectedSport === filter.id) ||
-            (filter.type === 'value' && showOnlyValueBets) ||
-            (filter.type === 'confidence' && showHighConfidence);
+            (filter.type === 'timeframe' && selectedTimeframe === filter.id) ||
+            (filter.type === 'value' && showOnlyValueBets && filter.id === 'value') ||
+            (filter.type === 'confidence' && showHighConfidence && filter.id === 'confidence');
 
           const Icon = filter.icon;
 
@@ -75,6 +81,8 @@ export const QuickFilterChips: React.FC<QuickFilterChipsProps> = ({
               onClick={() => {
                 if (filter.type === 'sport') {
                   onSportChange(filter.id);
+                } else if (filter.type === 'timeframe') {
+                  onTimeframeChange(selectedTimeframe === filter.id ? 'all' : filter.id);
                 } else if (filter.type === 'value') {
                   onValueBetChange(!showOnlyValueBets);
                 } else if (filter.type === 'confidence') {
