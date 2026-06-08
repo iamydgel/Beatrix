@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopPicksGrid } from "@/components/home/TopPicksGrid";
+import { BentoGrid } from "@/components/home/BentoGrid";
 
 export default function Page() {
   return (
@@ -34,7 +34,13 @@ export default function Page() {
       </header>
 
       {/* Main Grid Content */}
-      <TopPicksGrid />
+      <BentoGrid>
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="h-full w-full rounded-xl border border-white/5 bg-[#0A0A0A] p-4 flex items-center justify-center text-white/20 font-mono text-xs uppercase tracking-widest">
+            Placeholder {i}
+          </div>
+        ))}
+      </BentoGrid>
     </div>
   );
 }
