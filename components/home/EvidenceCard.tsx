@@ -41,9 +41,21 @@ export const EvidenceCard = () => {
   }
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
       onMouseMove={handleMouseMove}
+      animate={{
+        boxShadow: [
+          "0 0 0px rgba(0, 255, 159, 0)",
+          "0 0 20px rgba(0, 255, 159, 0.1)",
+          "0 0 0px rgba(0, 255, 159, 0)"
+        ]
+      }}
+      transition={{
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
       className="relative w-full h-full group overflow-hidden rounded-3xl bg-[#121212] border border-white/10 transition-all duration-500 hover:border-white/20"
     >
       {/* Spotlight Hover Effect */}
