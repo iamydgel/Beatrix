@@ -1,4 +1,5 @@
 import React from 'react';
+import { EvidenceCard } from './EvidenceCard';
 
 interface BentoGridProp {
   children: React.ReactNode[];
