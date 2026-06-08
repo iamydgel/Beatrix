@@ -24,8 +24,10 @@ export interface FilterChip {
 interface QuickFilterChipsProps {
   selectedSport: string;
   showOnlyValueBets: boolean;
+  showHighConfidence: boolean;
   onSportChange: (sport: string) => void;
   onValueBetChange: (value: boolean) => void;
+  onConfidenceChange: (value: boolean) => void;
 }
 
 const FILTERS: FilterChip[] = [
@@ -42,13 +44,16 @@ const BEZIER_CURVE = [0.22, 1, 0.36, 1];
 export const QuickFilterChips: React.FC<QuickFilterChipsProps> = ({
   selectedSport,
   showOnlyValueBets,
+  showHighConfidence,
   onSportChange,
   onValueBetChange,
+  onConfidenceChange,
 }) => {
   return (
-    <div className="relative w-full overflow-hidden">
+    <div className="relative w-full overflow-hidden group/ribbon">
+      <div className="absolute inset-0 pointer-events-none opacity-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
       <div
-        className="flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2"
+        className="relative flex items-center gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory py-2 backdrop-blur-sm"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
@@ -58,7 +63,8 @@ export const QuickFilterChips: React.FC<QuickFilterChipsProps> = ({
         {FILTERS.map((filter) => {
           const isActive =
             (filter.type === 'sport' && selectedSport === filter.id) ||
-            (filter.type === 'value' && showOnlyValueBets);
+            (filter.type === 'value' && showOnlyValueBets) ||
+            (filter.type === 'confidence' && showHighConfidence);
 
           const Icon = filter.icon;
 
@@ -71,15 +77,16 @@ export const QuickFilterChips: React.FC<QuickFilterChipsProps> = ({
                   onSportChange(filter.id);
                 } else if (filter.type === 'value') {
                   onValueBetChange(!showOnlyValueBets);
+                } else if (filter.type === 'confidence') {
+                  onConfidenceChange(!showHighConfidence);
                 }
-                // Confidence filter logic can be added here if state is implemented in parent
               }}
               className={`
                 relative flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 snap-start
                 font-mono text-xs font-medium whitespace-nowrap
                 ${isActive
                   ? 'bg-accent-neon text-black border-accent-neon shadow-[0_0_15px_rgba(184,242,122,0.3)]'
-                  : 'bg-[#121212] text-white border-white/10 hover:border-white/20'}
+                  : 'bg-[#121212]/60 backdrop-blur-md text-white border-white/5 hover:border-white/20'}
               `}
             >
               <motion.div
@@ -89,14 +96,14 @@ export const QuickFilterChips: React.FC<QuickFilterChipsProps> = ({
                 } : {}}
                 transition={{
                   duration: 0.4,
-                  ease: BEZIER_CURVE,
+                  ease: BEZIER_CURVE as any,
                   repeat: isActive ? 1 : 0
                 }}
               >
                 <Icon size={14} strokeWidth={2.5} />
               </motion.div>
 
-              <span>{filter.label}</span>
+              <span className="relative z-10">{filter.label}</span>
 
               {isActive && (
                 <motion.div

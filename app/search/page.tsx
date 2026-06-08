@@ -141,9 +141,7 @@ const itemVariants = {
     y: 0,
     scale: 1,
     transition: {
-      type: 'spring',
-      stiffness: 260,
-      damping: 20,
+      duration: 0.6,
       ease: BEZIER_CURVE
     }
   }
@@ -206,12 +204,13 @@ export default function SearchPage() {
             initial={false}
             animate={{
               width: isFocused ? '100%' : '100%',
-              backgroundColor: isFocused ? 'rgba(20, 20, 20, 1)' : 'rgba(18, 18, 18, 0.4)',
+              backgroundColor: isFocused ? 'rgba(20, 20, 20, 0.8)' : 'rgba(18, 18, 18, 0.4)',
               borderColor: isFocused ? '#00FF9F' : 'rgba(255, 255, 255, 0.1)'
             }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="relative flex items-center bg-[#121212]/40 border rounded-2xl px-4 py-3 transition-shadow focus-within:shadow-[0_0_20px_rgba(0,255,159,0.15)]"
+            className="relative flex items-center bg-[#121212]/40 backdrop-blur-xl border rounded-2xl px-4 py-3 transition-shadow focus-within:shadow-[0_0_20px_rgba(0,255,159,0.15)]"
           >
+            <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-20 mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
             <motion.div
               animate={{
                 scale: isFocused ? 1.1 : 1,
@@ -220,7 +219,6 @@ export default function SearchPage() {
             >
               <Search size={18} strokeWidth={2.5} />
             </motion.div>
-
             <input
               type="text"
               value={searchQuery}
@@ -228,15 +226,14 @@ export default function SearchPage() {
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               placeholder="Rechercher un match..."
-              className="w-full bg-transparent text-white outline-none font-mono text-sm ml-3 placeholder:text-text-secondary/40"
+              className="w-full bg-transparent text-white outline-none font-mono text-sm ml-3 placeholder:text-text-secondary/40 relative z-10"
             />
-
             {searchQuery && (
               <motion.button
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 onClick={() => setSearchQuery('')}
-                className="text-text-secondary hover:text-white text-[10px] font-mono uppercase tracking-tighter"
+                className="text-text-secondary hover:text-white text-[10px] font-mono uppercase tracking-tighter relative z-10"
               >
                 Effacer
               </motion.button>
