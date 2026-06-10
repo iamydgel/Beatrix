@@ -4,26 +4,26 @@ import { motion } from "framer-motion";
 
 export const PrecisionSweep = () => {
   return (
-    <motion.div
-      className="pointer-events-none fixed inset-0 z-50 overflow-hidden"
-      initial={{ top: "-10%" }}
-      animate={{
-        top: "110%"
-      }}
-      transition={{
-        duration: 8,
-        repeat: Infinity,
-        repeatType: "reverse",
-        ease: "linear"
-      }}
-    >
-      <div
-        className="h-px w-full bg-[#00FF9F] shadow-[0_0_15px_rgba(0,255,159,0.5)]"
-        style={{
-          filter: 'blur(0.5px)',
-          opacity: 0.4
+    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
+      <motion.div
+        className="absolute w-[150%] h-full -left-1/4 rotate-45"
+        initial={{ x: "-100%" }}
+        animate={{
+          x: "100%"
         }}
-      />
-    </motion.div>
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      >
+        <div
+          className="h-full w-full bg-gradient-to-r from-transparent via-accent-neon/5 to-transparent"
+          style={{
+            filter: 'blur(60px)',
+          }}
+        />
+      </motion.div>
+    </div>
   );
 };

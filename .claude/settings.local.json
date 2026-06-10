@@ -42,7 +42,8 @@
       "Bash(New-Item -ItemType File -Path components/home/PickCard.test.tsx)",
       "PowerShell(npm test components/home/PickCard.test.tsx)",
       "PowerShell(npx vitest run components/home/PickCard.test.tsx)",
-      "PowerShell(npx vitest run components/home/PickCard.test.tsx --alias '@/components/ui/NeonCard=C:/Users/emsjo/Documents/VETERENT/APP/WEB/Beatrix/components/ui/NeonCard.tsx')"
+      "PowerShell(npx vitest run components/home/PickCard.test.tsx --alias '@/components/ui/NeonCard=C:/Users/emsjo/Documents/VETERENT/APP/WEB/Beatrix/components/ui/NeonCard.tsx')",
+      "Bash(git branch *)"
     ]
   },
   "enableAllProjectMcpServers": true,

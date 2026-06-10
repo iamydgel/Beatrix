@@ -29,5 +29,16 @@
     "lucide-animated": "^1.0.4",
     "lucide-react": "^1.17.0",
     "tailwind-merge": "^3.6.0"
+  },
+  "pnpm": {
+    "approvedBuilds": {
+      "esbuild": [
+        "0.25.12",
+        "0.27.7"
+      ],
+      "sharp": [
+        "0.34.5"
+      ]
+    }
   }
 }

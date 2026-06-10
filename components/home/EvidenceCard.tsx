@@ -3,13 +3,15 @@
 import React, { useState, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
-  Activity,
-  TrendingUp,
-  ShieldCheck,
-  Zap,
+  ActivityIcon as Activity,
+  TrendingUpIcon as TrendingUp,
+  ShieldCheckIcon as ShieldCheck,
+  ZapIcon as Zap,
+} from 'lucide-animated';
+import {
   Target,
   Info
-} from 'lucide-animated';
+} from 'lucide-react';
 import { ProbabilityValue } from '@/components/ui/ProbabilityValue';
 import { ConfidenceBar } from '@/components/ui/ConfidenceBar';
 
@@ -29,10 +31,16 @@ const FACTORS: InfluenceFactor[] = [
 
 const BEZIER_CURVE = [0.22, 1, 0.36, 1];
 
-export const EvidenceCard = () => {
+interface EvidenceCardProps {
+  pick: PickData;
+}
+
+export const EvidenceCard: React.FC<EvidenceCardProps> = ({ pick }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const edge = (pick.beatrixProb - pick.bookmakerProb).toFixed(1);
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     const { left, top } = currentTarget.getBoundingClientRect();
@@ -56,11 +64,8 @@ export const EvidenceCard = () => {
         repeat: Infinity,
         ease: "easeInOut"
       }}
-      className="relative w-full h-full group overflow-hidden rounded-3xl bg-[#121212]/80 backdrop-blur-xl border border-white/10 transition-all duration-500 hover:border-white/20"
+      className="relative w-full h-full group overflow-hidden rounded-3xl bg-[#121212] border border-white/10 transition-all duration-500 hover:border-white/20"
     >
-      {/* Grain Overlay */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')" }} />
-
       {/* Spotlight Hover Effect */}
       <motion.div
         className="pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
@@ -75,82 +80,105 @@ export const EvidenceCard = () => {
       {/* Content Layer */}
       <div className="relative z-10 flex h-full flex-col p-6">
         {/* Header / Top Bar */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-accent-neon animate-pulse shadow-[0_0_8px_#00FF9F]" />
+            <div className={`h-2 w-2 rounded-full animate-pulse shadow-[0_0_8px] ${
+              pick.status === 'success' ? 'bg-accent-neon shadow-accent-neon' :
+              pick.status === 'warning' ? 'bg-yellow-400 shadow-yellow-400' : 'bg-red-400 shadow-red-400'
+            }`} />
             <span className="text-[10px] font-bold tracking-widest text-white/40 uppercase font-mono">
               Evidence Engine v4.2
             </span>
           </div>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-accent-neon/30 bg-accent-neon/5">
+          <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border transition-colors ${
+            pick.isValueBet
+              ? 'border-accent-neon/30 bg-accent-neon/5 text-accent-neon'
+              : 'border-white/10 bg-white/5 text-white/40'
+          }`}>
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-neon opacity-75"></span>
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent-neon"></span>
+              {pick.isValueBet && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent-neon opacity-75"></span>}
+              <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${pick.isValueBet ? 'bg-accent-neon' : 'bg-white/20'}`}></span>
             </span>
-            <span className="text-[9px] font-bold text-accent-neon uppercase tracking-tighter font-mono">
-              Edge Verified
+            <span className="text-[9px] font-bold uppercase tracking-tighter font-mono">
+              {pick.isValueBet ? `Edge +${edge}%` : 'Standard Value'}
             </span>
+          </div>
+        </div>
+
+        {/* Event Identity */}
+        <div className="mb-6 min-h-[52px]">
+          <div className="text-[10px] font-medium text-white/30 uppercase tracking-widest font-mono mb-1 truncate">
+            {pick.league}
+          </div>
+          <div className="text-base md:text-lg font-bold text-white font-mono tracking-tight flex items-center gap-2">
+            <span className="flex-1 text-right text-balance leading-tight">{pick.homeTeam}</span>
+            <span className="text-white/20 text-[10px] font-normal shrink-0 uppercase px-1">vs</span>
+            <span className="flex-1 text-left text-balance leading-tight">{pick.awayTeam}</span>
           </div>
         </div>
 
         {/* Proof Zone (Left/Top) */}
         <div className="flex flex-col items-start gap-4 mb-10">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 w-full">
             <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest font-mono">
               Calculated Probability
             </span>
             <div className="flex items-baseline gap-2">
-              <ProbabilityValue value={87.4} isValueBet={true} />
+              <ProbabilityValue value={pick.beatrixProb} isValueBet={pick.isValueBet} />
             </div>
           </div>
 
-          <div className="w-full max-w-[240px] space-y-2">
-            <ConfidenceBar progress={87.4} />
+          <div className="w-full space-y-2">
+            <ConfidenceBar progress={pick.confidence} />
             <div className="flex justify-between text-[9px] font-mono text-white/20 uppercase tracking-tighter">
-              <span>Confidence Level</span>
-              <span>87.4%</span>
+              <span className="truncate">Confidence Level</span>
+              <span className="shrink-0">{pick.confidence}%</span>
             </div>
           </div>
         </div>
 
+
         {/* Analytical Panel (Right/Bottom) */}
-        <div className="mt-auto grid grid-cols-1 gap-3">
-          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5 group/factor hover:bg-white/[0.06] transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="p-1.5 rounded-lg bg-white/5 text-white/60">
+        <div className="mt-auto grid grid-cols-1 gap-3 w-full">
+          <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.03] border border-white/5 group/factor hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-default">
+            <div className="flex items-center gap-3 overflow-hidden">
+              <div className="p-1.5 rounded-lg bg-white/5 text-white/60 shrink-0 group-hover/factor:text-accent-neon transition-colors">
                 <Target size={14} />
               </div>
-              <span className="text-[11px] font-bold text-white/70 uppercase tracking-tight font-mono">
+              <span className="text-[11px] font-bold text-white/70 uppercase tracking-tight font-mono truncate group-hover/factor:text-white transition-colors">
                 Analysis Vector
               </span>
             </div>
-            <Info size={12} className="text-white/20" />
+            <Info size={12} className="text-white/20 shrink-0 group-hover/factor:text-white/40 transition-colors" />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             {FACTORS.map((factor) => (
               <motion.div
                 key={factor.label}
-                whileHover={{ y: -2 }}
+                whileHover={{
+                  y: -2,
+                  scale: 1.02,
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  borderColor: "rgba(255, 255, 255, 0.2)"
+                }}
                 transition={{ duration: 0.2, ease: BEZIER_CURVE }}
-                className="flex items-center justify-between p-2 rounded-lg bg-white/[0.02] border border-white/5"
+                className="flex items-center justify-between p-2 rounded-lg bg-white/[0.02] border border-white/5 overflow-hidden cursor-default transition-colors"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 overflow-hidden">
                   <factor.icon
                     size={12}
-                    className={`${
-                      factor.impact === 'positive' ? 'text-accent-neon' :
-                      factor.impact === 'negative' ? 'text-red-400' : 'text-white/40'
-                    }`}
+                    className={`shrink-0 ${factor.impact === 'positive' ? 'text-accent-neon' :
+                        factor.impact === 'negative' ? 'text-red-400' : 'text-white/40'
+                      }`}
                   />
-                  <span className="text-[9px] font-bold text-white/40 uppercase tracking-tighter font-mono">
+                  <span className="text-[9px] font-bold text-white/40 uppercase tracking-tighter font-mono truncate">
                     {factor.label}
                   </span>
                 </div>
-                <span className={`text-[10px] font-mono font-bold ${
-                  factor.impact === 'positive' ? 'text-accent-neon' :
-                  factor.impact === 'negative' ? 'text-red-400' : 'text-white/60'
-                }`}>
+                <span className={`text-[10px] font-mono font-bold shrink-0 ml-1 ${factor.impact === 'positive' ? 'text-accent-neon' :
+                    factor.impact === 'negative' ? 'text-red-400' : 'text-white/60'
+                  }`}>
                   {factor.value}
                 </span>
               </motion.div>
@@ -158,6 +186,6 @@ export const EvidenceCard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
